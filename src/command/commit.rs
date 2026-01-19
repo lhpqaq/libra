@@ -87,8 +87,10 @@ fn parse_author(author: &str) -> (String, String) {
     let author = author.trim();
     
     // Try to parse "Name <email>" format
-    if let Some(start_idx) = author.rfind('<') {
-        if let Some(end_idx) = author.rfind('>') {
+    // Use find (not rfind) to get the first '<' and '>' which matches Git's behavior
+    if let Some(start_idx) = author.find('<') {
+        if let Some(end_idx) = author[start_idx..].find('>') {
+            let end_idx = start_idx + end_idx;
             if start_idx < end_idx && end_idx == author.len() - 1 {
                 let name = author[..start_idx].trim().to_string();
                 let email = author[start_idx + 1..end_idx].trim().to_string();
